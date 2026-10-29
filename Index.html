@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -42,90 +41,89 @@
   }
   main { max-width: 520px; margin: 0 auto; display: grid; gap: 14px; }
 
-header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-h1 { margin: 0; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
-h1 span { color: var(–signal); }
-.sub { color: var(–muted); font-size: .85rem; }
+  header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  h1 { margin: 0; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
+  h1 span { color: var(--signal); }
+  .sub { color: var(--muted); font-size: .85rem; }
 
-/* Viewfinder */
-.finder {
-position: relative;
-background: #0b110e;
-border-radius: 14px;
-overflow: hidden;
-aspect-ratio: 4 / 3;
-border: 1px solid var(–line);
-}
-#reader { width: 100%; height: 100%; }
-#reader video { width: 100% !important; height: 100% !important; object-fit: cover; }
-#reader img[alt=“Info icon”], #reader > div:not([id]) { display: none !important; }
-.idle {
-position: absolute; inset: 0; display: grid; place-items: center;
-color: #cdd6cf; text-align: center; padding: 24px; font-size: .95rem; line-height: 1.4;
-pointer-events: none;
-}
-.idle.hide { display: none; }
-/* Scan line: the one memorable element */
-.laser {
-position: absolute; left: 8%; right: 8%; top: 50%; height: 2px;
-background: var(–signal);
-box-shadow: 0 0 14px 2px var(–signal);
-pointer-events: none; display: none;
-}
-.finder.live .laser { display: block; animation: sweep 2.2s ease-in-out infinite alternate; }
-@keyframes sweep { from { top: 32%; } to { top: 68%; } }
-@media (prefers-reduced-motion: reduce) { .finder.live .laser { animation: none; } }
-.finder.hit { outline: 3px solid var(–ok); outline-offset: -3px; }
+  /* Viewfinder */
+  .finder {
+    position: relative;
+    background: #0b110e;
+    border-radius: 14px;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    border: 1px solid var(--line);
+  }
+  #reader { width: 100%; height: 100%; }
+  #reader video { width: 100% !important; height: 100% !important; object-fit: cover; }
+  #reader img[alt="Info icon"], #reader > div:not([id]) { display: none !important; }
+  .idle {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    color: #cdd6cf; text-align: center; padding: 24px; font-size: .95rem; line-height: 1.4;
+    pointer-events: none;
+  }
+  .idle.hide { display: none; }
+  /* Scan line: the one memorable element */
+  .laser {
+    position: absolute; left: 8%; right: 8%; top: 50%; height: 2px;
+    background: var(--signal);
+    box-shadow: 0 0 14px 2px var(--signal);
+    pointer-events: none; display: none;
+  }
+  .finder.live .laser { display: block; animation: sweep 2.2s ease-in-out infinite alternate; }
+  @keyframes sweep { from { top: 32%; } to { top: 68%; } }
+  @media (prefers-reduced-motion: reduce) { .finder.live .laser { animation: none; } }
+  .finder.hit { outline: 3px solid var(--ok); outline-offset: -3px; }
 
-/* Buttons */
-.row { display: flex; gap: 10px; flex-wrap: wrap; }
-button {
-font: inherit; font-weight: 700; cursor: pointer;
-border-radius: 10px; border: 1px solid var(–line);
-background: var(–surface); color: var(–ink);
-padding: 13px 16px; min-height: 48px;
-}
-button:focus-visible, input:focus-visible { outline: 3px solid var(–signal); outline-offset: 2px; }
-button.primary { background: var(–signal); border-color: var(–signal); color: var(–signal-ink); flex: 1 1 160px; }
-button.grow { flex: 1 1 120px; }
-button:disabled { opacity: .5; cursor: not-allowed; }
+  /* Buttons */
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  button {
+    font: inherit; font-weight: 700; cursor: pointer;
+    border-radius: 10px; border: 1px solid var(--line);
+    background: var(--surface); color: var(--ink);
+    padding: 13px 16px; min-height: 48px;
+  }
+  button:focus-visible, input:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
+  button.primary { background: var(--signal); border-color: var(--signal); color: var(--signal-ink); flex: 1 1 160px; }
+  button.grow { flex: 1 1 120px; }
+  button:disabled { opacity: .5; cursor: not-allowed; }
 
-/* Result */
-.result {
-background: var(–surface); border: 1px solid var(–line);
-border-radius: 14px; padding: 16px; display: grid; gap: 10px;
-}
-.label { font-size: .8rem; color: var(–muted); }
-.code {
-font-family: ui-monospace, “SF Mono”, Menlo, Consolas, monospace;
-font-size: 1.45rem; font-weight: 700; word-break: break-all; min-height: 2.2rem;
-user-select: all;
-}
-.code.empty { color: var(–muted); font-weight: 400; font-size: 1rem; }
-.status { font-size: .9rem; min-height: 1.3em; }
-.status.ok { color: var(–ok); }
-.status.err { color: var(–err); }
+  /* Result */
+  .result {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 14px; padding: 16px; display: grid; gap: 10px;
+  }
+  .label { font-size: .8rem; color: var(--muted); }
+  .code {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 1.45rem; font-weight: 700; word-break: break-all; min-height: 2.2rem;
+    user-select: all;
+  }
+  .code.empty { color: var(--muted); font-weight: 400; font-size: 1rem; }
+  .status { font-size: .9rem; min-height: 1.3em; }
+  .status.ok { color: var(--ok); }
+  .status.err { color: var(--err); }
 
-/* Settings + history */
-.opts { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; font-size: .92rem; }
-.opts label { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; }
-input[type=checkbox] { width: 20px; height: 20px; accent-color: var(–signal); }
+  /* Settings + history */
+  .opts { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; font-size: .92rem; }
+  .opts label { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; }
+  input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--signal); }
 
-h2 { margin: 6px 0 0; font-size: 1rem; }
-ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-li {
-display: flex; align-items: center; justify-content: space-between; gap: 10px;
-background: var(–surface); border: 1px solid var(–line); border-radius: 10px;
-padding: 8px 8px 8px 12px;
-}
-li .t { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .95rem; word-break: break-all; }
-li .w { color: var(–muted); font-size: .75rem; display: block; }
-li button { min-height: 40px; padding: 8px 12px; font-size: .85rem; }
-.none { color: var(–muted); font-size: .9rem; }
-#file { display: none; }
-#filereader { display: none; }
+  h2 { margin: 6px 0 0; font-size: 1rem; }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  li {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 8px 8px 8px 12px;
+  }
+  li .t { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .95rem; word-break: break-all; }
+  li .w { color: var(--muted); font-size: .75rem; display: block; }
+  li button { min-height: 40px; padding: 8px 12px; font-size: .85rem; }
+  .none { color: var(--muted); font-size: .9rem; }
+  #file { display: none; }
+  #filereader { display: none; }
 </style>
-
 </head>
 <body>
 <main>
@@ -391,6 +389,5 @@ li button { min-height: 40px; padding: 8px 12px; font-size: .85rem; }
   document.addEventListener('visibilitychange', () => { if (document.hidden && running) stop(); });
 })();
 </script>
-
 </body>
 </html>
