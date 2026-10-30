@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>TabocideScan</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/zxing-wasm@3.1.3/dist/iife/reader/index.js"></script>
 <style>
   :root {
     --paper: #eceee8;
@@ -41,89 +42,87 @@
   }
   main { max-width: 520px; margin: 0 auto; display: grid; gap: 14px; }
 
-  header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
-  h1 { margin: 0; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
-  h1 span { color: var(--signal); }
-  .sub { color: var(--muted); font-size: .85rem; }
+header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+h1 { margin: 0; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
+h1 span { color: var(–signal); }
+.sub { color: var(–muted); font-size: .85rem; }
 
-  /* Viewfinder */
-  .finder {
-    position: relative;
-    background: #0b110e;
-    border-radius: 14px;
-    overflow: hidden;
-    aspect-ratio: 4 / 3;
-    border: 1px solid var(--line);
-  }
-  #reader { width: 100%; height: 100%; }
-  #reader video { width: 100% !important; height: 100% !important; object-fit: cover; }
-  #reader img[alt="Info icon"], #reader > div:not([id]) { display: none !important; }
-  .idle {
-    position: absolute; inset: 0; display: grid; place-items: center;
-    color: #cdd6cf; text-align: center; padding: 24px; font-size: .95rem; line-height: 1.4;
-    pointer-events: none;
-  }
-  .idle.hide { display: none; }
-  /* Scan line: the one memorable element */
-  .laser {
-    position: absolute; left: 8%; right: 8%; top: 50%; height: 2px;
-    background: var(--signal);
-    box-shadow: 0 0 14px 2px var(--signal);
-    pointer-events: none; display: none;
-  }
-  .finder.live .laser { display: block; animation: sweep 2.2s ease-in-out infinite alternate; }
-  @keyframes sweep { from { top: 32%; } to { top: 68%; } }
-  @media (prefers-reduced-motion: reduce) { .finder.live .laser { animation: none; } }
-  .finder.hit { outline: 3px solid var(--ok); outline-offset: -3px; }
+/* Viewfinder */
+.finder {
+position: relative;
+background: #0b110e;
+border-radius: 14px;
+overflow: hidden;
+aspect-ratio: 4 / 3;
+border: 1px solid var(–line);
+}
+#video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.idle {
+position: absolute; inset: 0; display: grid; place-items: center;
+color: #cdd6cf; text-align: center; padding: 24px; font-size: .95rem; line-height: 1.4;
+pointer-events: none;
+}
+.idle.hide { display: none; }
+/* Scan line: the one memorable element */
+.laser {
+position: absolute; left: 8%; right: 8%; top: 50%; height: 2px;
+background: var(–signal);
+box-shadow: 0 0 14px 2px var(–signal);
+pointer-events: none; display: none;
+}
+.finder.live .laser { display: block; animation: sweep 2.2s ease-in-out infinite alternate; }
+@keyframes sweep { from { top: 32%; } to { top: 68%; } }
+@media (prefers-reduced-motion: reduce) { .finder.live .laser { animation: none; } }
+.finder.hit { outline: 3px solid var(–ok); outline-offset: -3px; }
 
-  /* Buttons */
-  .row { display: flex; gap: 10px; flex-wrap: wrap; }
-  button {
-    font: inherit; font-weight: 700; cursor: pointer;
-    border-radius: 10px; border: 1px solid var(--line);
-    background: var(--surface); color: var(--ink);
-    padding: 13px 16px; min-height: 48px;
-  }
-  button:focus-visible, input:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
-  button.primary { background: var(--signal); border-color: var(--signal); color: var(--signal-ink); flex: 1 1 160px; }
-  button.grow { flex: 1 1 120px; }
-  button:disabled { opacity: .5; cursor: not-allowed; }
+/* Buttons */
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+button {
+font: inherit; font-weight: 700; cursor: pointer;
+border-radius: 10px; border: 1px solid var(–line);
+background: var(–surface); color: var(–ink);
+padding: 13px 16px; min-height: 48px;
+}
+button:focus-visible, input:focus-visible { outline: 3px solid var(–signal); outline-offset: 2px; }
+button.primary { background: var(–signal); border-color: var(–signal); color: var(–signal-ink); flex: 1 1 160px; }
+button.grow { flex: 1 1 120px; }
+button:disabled { opacity: .5; cursor: not-allowed; }
 
-  /* Result */
-  .result {
-    background: var(--surface); border: 1px solid var(--line);
-    border-radius: 14px; padding: 16px; display: grid; gap: 10px;
-  }
-  .label { font-size: .8rem; color: var(--muted); }
-  .code {
-    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    font-size: 1.45rem; font-weight: 700; word-break: break-all; min-height: 2.2rem;
-    user-select: all;
-  }
-  .code.empty { color: var(--muted); font-weight: 400; font-size: 1rem; }
-  .status { font-size: .9rem; min-height: 1.3em; }
-  .status.ok { color: var(--ok); }
-  .status.err { color: var(--err); }
+/* Result */
+.result {
+background: var(–surface); border: 1px solid var(–line);
+border-radius: 14px; padding: 16px; display: grid; gap: 10px;
+}
+.label { font-size: .8rem; color: var(–muted); }
+.code {
+font-family: ui-monospace, “SF Mono”, Menlo, Consolas, monospace;
+font-size: 1.45rem; font-weight: 700; word-break: break-all; min-height: 2.2rem;
+user-select: all;
+}
+.code.empty { color: var(–muted); font-weight: 400; font-size: 1rem; }
+.status { font-size: .9rem; min-height: 1.3em; }
+.status.ok { color: var(–ok); }
+.status.err { color: var(–err); }
 
-  /* Settings + history */
-  .opts { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; font-size: .92rem; }
-  .opts label { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; }
-  input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--signal); }
+/* Settings + history */
+.opts { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; font-size: .92rem; }
+.opts label { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; }
+input[type=checkbox] { width: 20px; height: 20px; accent-color: var(–signal); }
 
-  h2 { margin: 6px 0 0; font-size: 1rem; }
-  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-  li {
-    display: flex; align-items: center; justify-content: space-between; gap: 10px;
-    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
-    padding: 8px 8px 8px 12px;
-  }
-  li .t { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .95rem; word-break: break-all; }
-  li .w { color: var(--muted); font-size: .75rem; display: block; }
-  li button { min-height: 40px; padding: 8px 12px; font-size: .85rem; }
-  .none { color: var(--muted); font-size: .9rem; }
-  #file { display: none; }
-  #filereader { display: none; }
+h2 { margin: 6px 0 0; font-size: 1rem; }
+ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+li {
+display: flex; align-items: center; justify-content: space-between; gap: 10px;
+background: var(–surface); border: 1px solid var(–line); border-radius: 10px;
+padding: 8px 8px 8px 12px;
+}
+li .t { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .95rem; word-break: break-all; }
+li .w { color: var(–muted); font-size: .75rem; display: block; }
+li button { min-height: 40px; padding: 8px 12px; font-size: .85rem; }
+.none { color: var(–muted); font-size: .9rem; }
+#file { display: none; }
 </style>
+
 </head>
 <body>
 <main>
@@ -133,7 +132,7 @@
   </header>
 
   <section class="finder" id="finder" aria-label="Kamera pemindai">
-    <div id="reader"></div>
+    <video id="video" playsinline muted autoplay></video>
     <div class="idle" id="idle">Tekan “Mulai scan”, lalu arahkan kamera ke barcode sampai garis menutupi seluruh batang.</div>
     <div class="laser"></div>
   </section>
@@ -144,7 +143,6 @@
     <button class="grow" id="pick">Dari foto</button>
     <input type="file" id="file" accept="image/*">
   </div>
-  <div id="filereader"></div>
 
   <section class="result" aria-live="polite">
     <span class="label">Hasil scan terakhir</span>
@@ -175,19 +173,17 @@
     finder: $('finder'), idle: $('idle'), toggle: $('toggle'), torch: $('torch'),
     pick: $('pick'), file: $('file'), code: $('code'), status: $('status'),
     copy: $('copy'), clear: $('clear'), autocopy: $('autocopy'),
-    continuous: $('continuous'), beep: $('beep'), history: $('history')
+    continuous: $('continuous'), beep: $('beep'), history: $('history'), video: $('video')
   };
 
-  let scanner = null;
-  let running = false;
-  let torchOn = false;
+  let stream = null, track = null;
+  let running = false, busy = false, torchOn = false, timer = null;
   let last = { text: '', at: 0 };
   let hist = [];
-
-  const FORMATS = () => {
-    const F = Html5QrcodeSupportedFormats;
-    return [F.CODE_128, F.CODE_39, F.CODE_93, F.EAN_13, F.EAN_8, F.UPC_A, F.UPC_E, F.ITF, F.CODABAR, F.QR_CODE];
-  };
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  const native = ('BarcodeDetector' in window) ? new BarcodeDetector() : null;
+  const READ_OPTS = { tryHarder: true, tryRotate: true, tryInvert: true, tryDownscale: true, maxNumberOfSymbols: 1 };
 
   function setStatus(msg, type = '') {
     el.status.textContent = msg;
@@ -195,18 +191,13 @@
   }
 
   async function copyText(text) {
-    try {
-      await navigator.clipboard.writeText(text);
-      return true;
-    } catch (_) {
+    try { await navigator.clipboard.writeText(text); return true; }
+    catch (_) {
       try {
         const ta = document.createElement('textarea');
-        ta.value = text;
-        ta.setAttribute('readonly', '');
-        ta.style.position = 'fixed';
-        ta.style.opacity = '0';
-        document.body.appendChild(ta);
-        ta.select();
+        ta.value = text; ta.setAttribute('readonly', '');
+        ta.style.cssText = 'position:fixed;opacity:0';
+        document.body.appendChild(ta); ta.select();
         const ok = document.execCommand('copy');
         document.body.removeChild(ta);
         return ok;
@@ -218,13 +209,12 @@
     if (!el.beep.checked) return;
     try { navigator.vibrate && navigator.vibrate(60); } catch (_) {}
     try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const o = ctx.createOscillator(), g = ctx.createGain();
-      o.type = 'square'; o.frequency.value = 1800;
-      g.gain.value = 0.08;
-      o.connect(g); g.connect(ctx.destination);
-      o.start(); o.stop(ctx.currentTime + 0.09);
-      o.onended = () => ctx.close();
+      const a = new (window.AudioContext || window.webkitAudioContext)();
+      const o = a.createOscillator(), g = a.createGain();
+      o.type = 'square'; o.frequency.value = 1800; g.gain.value = 0.08;
+      o.connect(g); g.connect(a.destination);
+      o.start(); o.stop(a.currentTime + 0.09);
+      o.onended = () => a.close();
     } catch (_) {}
   }
 
@@ -241,10 +231,8 @@
     hist.forEach(h => {
       const li = document.createElement('li');
       const left = document.createElement('div');
-      const t = document.createElement('span');
-      t.className = 't'; t.textContent = h.text;
-      const w = document.createElement('span');
-      w.className = 'w'; w.textContent = h.time;
+      const t = document.createElement('span'); t.className = 't'; t.textContent = h.text;
+      const w = document.createElement('span'); w.className = 'w'; w.textContent = h.time;
       left.append(t, w);
       const b = document.createElement('button');
       b.textContent = 'Salin';
@@ -259,13 +247,12 @@
 
   async function onResult(text, format) {
     const now = Date.now();
-    if (text === last.text && now - last.at < 2500) return; // cegah hasil dobel
+    if (text === last.text && now - last.at < 2500) return;
     last = { text, at: now };
 
     el.code.textContent = text;
     el.code.classList.remove('empty');
-    el.copy.disabled = false;
-    el.clear.disabled = false;
+    el.copy.disabled = false; el.clear.disabled = false;
     el.finder.classList.add('hit');
     setTimeout(() => el.finder.classList.remove('hit'), 700);
     feedback();
@@ -281,44 +268,60 @@
     } else {
       setStatus('Terbaca (' + (format || 'barcode') + ').', 'ok');
     }
-
     if (!el.continuous.checked) stop();
+  }
+
+  // Baca satu frame video: seluruh lebar frame, resolusi penuh (maks 1920px)
+  async function scanFrame() {
+    if (!running || busy || el.video.readyState < 2) return;
+    busy = true;
+    try {
+      const vw = el.video.videoWidth, vh = el.video.videoHeight;
+      const scale = Math.min(1, 1920 / vw);
+      canvas.width = Math.round(vw * scale);
+      canvas.height = Math.round(vh * scale);
+      ctx.drawImage(el.video, 0, 0, canvas.width, canvas.height);
+
+      if (native) {
+        try {
+          const r = await native.detect(canvas);
+          if (r.length) { await onResult(r[0].rawValue, r[0].format); return; }
+        } catch (_) {}
+      }
+      if (window.ZXingWASM) {
+        const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const res = await ZXingWASM.readBarcodes(img, READ_OPTS);
+        const hit = res.find(r => r.text);
+        if (hit) await onResult(hit.text, hit.format);
+      }
+    } catch (_) {
+    } finally { busy = false; }
   }
 
   async function start() {
     if (running) return;
-    if (typeof Html5Qrcode === 'undefined') {
+    if (!window.ZXingWASM && !native) {
       setStatus('Pustaka scanner gagal dimuat. Cek koneksi internet lalu muat ulang.', 'err');
       return;
     }
     try {
-      scanner = new Html5Qrcode('reader', {
-        formatsToSupport: FORMATS(),
-        useBarCodeDetectorIfSupported: true,
-        verbose: false
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } }
       });
-      await scanner.start(
-        { facingMode: 'environment' },
-        {
-          fps: 15,
-          qrbox: (w, h) => ({ width: Math.floor(w * 0.9), height: Math.floor(Math.min(h * 0.55, w * 0.45)) }),
-          disableFlip: false,
-          videoConstraints: {
-            facingMode: 'environment',
-            width: { ideal: 1920 },
-            height: { ideal: 1080 },
-            advanced: [{ focusMode: 'continuous' }]
-          }
-        },
-        (text, res) => onResult(text, res && res.result && res.result.format && res.result.format.formatName),
-        () => {}
-      );
+      track = stream.getVideoTracks()[0];
+      el.video.srcObject = stream;
+      await el.video.play();
+      try { await track.applyConstraints({ advanced: [{ focusMode: 'continuous' }] }); } catch (_) {}
+
       running = true;
       el.finder.classList.add('live');
       el.idle.classList.add('hide');
       el.toggle.textContent = 'Berhenti';
-      setStatus('Kamera aktif. Arahkan ke barcode.');
-      checkTorch();
+      setStatus('Kamera aktif. Dekatkan sampai barcode memenuhi lebar layar.');
+      const caps = track.getCapabilities ? track.getCapabilities() : {};
+      el.torch.disabled = !caps.torch;
+      timer = setInterval(scanFrame, 180);
     } catch (err) {
       running = false;
       const msg = String(err);
@@ -328,10 +331,11 @@
     }
   }
 
-  async function stop() {
-    if (!scanner) return;
-    try { if (running) await scanner.stop(); scanner.clear(); } catch (_) {}
-    running = false; torchOn = false;
+  function stop() {
+    clearInterval(timer); timer = null;
+    if (stream) stream.getTracks().forEach(t => t.stop());
+    stream = null; track = null; running = false; torchOn = false;
+    el.video.srcObject = null;
     el.finder.classList.remove('live');
     el.idle.classList.remove('hide');
     el.toggle.textContent = 'Mulai scan';
@@ -339,18 +343,11 @@
     el.torch.textContent = 'Senter';
   }
 
-  function checkTorch() {
-    try {
-      const caps = scanner.getRunningTrackCameraCapabilities();
-      el.torch.disabled = !(caps && caps.torchFeature && caps.torchFeature().isSupported());
-    } catch (_) { el.torch.disabled = true; }
-  }
-
   el.toggle.addEventListener('click', () => running ? stop() : start());
 
   el.torch.addEventListener('click', async () => {
     try {
-      await scanner.getRunningTrackCameraCapabilities().torchFeature().apply(!torchOn);
+      await track.applyConstraints({ advanced: [{ torch: !torchOn }] });
       torchOn = !torchOn;
       el.torch.textContent = torchOn ? 'Senter mati' : 'Senter';
     } catch (_) { setStatus('Senter tidak didukung di perangkat ini.', 'err'); }
@@ -360,12 +357,13 @@
   el.file.addEventListener('change', async () => {
     const f = el.file.files && el.file.files[0];
     if (!f) return;
-    if (running) await stop();
+    if (running) stop();
+    setStatus('Membaca foto...');
     try {
-      const s = new Html5Qrcode('filereader', { formatsToSupport: FORMATS(), useBarCodeDetectorIfSupported: true, verbose: false });
-      const res = await s.scanFileV2(f, false);
-      s.clear();
-      await onResult(res.decodedText, res.result && res.result.format && res.result.format.formatName);
+      const res = await ZXingWASM.readBarcodes(f, READ_OPTS);
+      const hit = res.find(r => r.text);
+      if (!hit) throw new Error('none');
+      await onResult(hit.text, hit.format);
     } catch (_) {
       setStatus('Barcode tidak terbaca dari foto. Coba foto yang lebih dekat, tajam, dan lurus.', 'err');
     }
@@ -389,5 +387,6 @@
   document.addEventListener('visibilitychange', () => { if (document.hidden && running) stop(); });
 })();
 </script>
+
 </body>
 </html>
